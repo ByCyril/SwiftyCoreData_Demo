@@ -1,0 +1,12 @@
+PODS:
+  - SwiftyCoreData (2.0)
+
+DEPENDENCIES:
+  - SwiftyCoreData
+
+SPEC CHECKSUMS:
+  SwiftyCoreData: 94c17cfa98207a051c671143068cdcb4e8c3982b
+
+PODFILE CHECKSUM: aa27d734e3df0fac95821d1a3c11a89be2138de1
+
+COCOAPODS: 1.2.1
