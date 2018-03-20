@@ -16,32 +16,82 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     public var coredata = [NSManagedObject]()
     
-    public var tableView = UITableView()
+    public var tableView: UITableView!
+    private var navbar: UINavigationBar!
+    
     private var cellIdentifier = "Cell"
-    private var addButton = UIBarButtonItem()
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        
-        tableViewSetup()
+        self.navigationBarSetup()
+        self.tableViewSetup()
         self.retrieveData()
+
+    }
+    
+    // MARK: NavigationBar setup
+    
+    func navigationBarSetup() {
+        
+        let x: CGFloat = 0
+        let y: CGFloat = 0
+        let width: CGFloat = self.view.frame.size.width
+        let height: CGFloat = 44
+        
+        navbar = UINavigationBar(frame: CGRect(x: x, y: y, width: width, height: height))
+        self.view.addSubview(navbar)
+        
+        let navItem = UINavigationItem(title: "Container")
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: nil, action: #selector(ViewController.addDataView))
+        navItem.rightBarButtonItem = addButton
+        
+        navbar.setItems([navItem], animated: true)
     }
     
     
-    @IBAction func addDataView() {
-        let alert = UIAlertController(title: "Add Something", message: "", preferredStyle: .alert)
+    // MARK: TableView setup
+
+    func tableViewSetup() {
+        
+        let x: CGFloat = 0
+        let y: CGFloat = 0
+        let width: CGFloat = self.view.frame.size.width
+        let height: CGFloat = 44
+        
+        tableView = UITableView(frame: CGRect(x: x, y: y, width: width, height: height))
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
+        
+        self.view.addSubview(tableView)
+        
+    }
+    
+    // MARK: Display AlertController to add items
+
+    @objc func addDataView() {
+        
+        let alertTitle = "Add Something"
+        let cancelTitle = "Cancel"
+        let saveTitle = "Save"
+        let titleTextfieldPlaceholder = "Title"
+        let detailsTextfieldPlaceholder = "Details"
+
+        let alert = UIAlertController(title: alertTitle, message: nil, preferredStyle: .alert)
         
         alert.addTextField { (textfield) in
-            textfield.placeholder = "Title"
+            textfield.placeholder = titleTextfieldPlaceholder
         }
         alert.addTextField { (textfield) in
-            textfield.placeholder = "Details"
+            textfield.placeholder = detailsTextfieldPlaceholder
         }
         
-        let cancelButton = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let cancelButton = UIAlertAction(title: cancelTitle, style: .cancel, handler: nil)
         
-        let saveButton = UIAlertAction(title: "Save", style: .default) { (save) in
+        let saveButton = UIAlertAction(title: saveTitle, style: .default) { (save) in
             
             let title = alert.textFields![0].text!
             let details = alert.textFields![1].text!
@@ -58,17 +108,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.present(alert, animated: true, completion: nil)
     }
     
-    func tableViewSetup() {
-        
-        tableView.delegate = self
-        tableView.dataSource = self
-        
-        tableView.frame = self.view.frame
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
-        
-        self.view.addSubview(tableView)
-        
-    }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         
@@ -89,8 +128,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         var cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier)!
         cell = UITableViewCell(style: .subtitle, reuseIdentifier: cellIdentifier)
         
-        let title = coredata[indexPath.row].value(forKey: "title") as! String
-        let details = coredata[indexPath.row].value(forKey: "details") as! String
+        let objects = coredata[indexPath.row]
+        let title = objects.value(forKey: "title") as! String
+        let details = objects.value(forKey: "details") as! String
         
         cell.textLabel?.text = title
         cell.detailTextLabel?.text = details
